@@ -3,33 +3,97 @@
   <head>
     <meta charset="UTF-8" />
     <title>Stellar Dashboard</title>
+    <!-- Tambah di <head> -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
     <style>
       body {
         margin: 0;
-        background: #000;
+        background: linear-gradient(180deg, #0a0a23, #1a1a3d);
+        font-family: Arial, sans-serif;
+        overflow: hidden;
       }
       canvas {
         display: block;
       }
-      #info {
+      #header {
         position: absolute;
-        top: 10px;
-        left: 10px;
-        color: white;
-        font-family: Arial, sans-serif;
-        background: rgba(0, 0, 0, 0.7);
+        top: 0;
+        left: 0;
+        width: 100%;
+        background: rgba(0, 0, 50, 0.9);
+        color: #fff;
+        padding: 10px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      #header h1 {
+        margin: 0;
+        font-size: 24px;
+      }
+      #sidebar {
+        position: absolute;
+        top: 60px;
+        left: 0;
+        width: 250px;
+        height: calc(100% - 60px);
+        background: rgba(0, 0, 50, 0.8);
+        color: #fff;
+        padding: 20px;
+        box-sizing: border-box;
+        transition: width 0.3s;
+      }
+      #sidebar.collapsed {
+        width: 60px;
+      }
+      #sidebar h2 {
+        margin: 0 0 20px;
+        font-size: 20px;
+      }
+      .satellite-item {
         padding: 10px;
+        margin: 5px 0;
+        background: rgba(255, 255, 255, 0.1);
         border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .satellite-item:hover {
+        background: rgba(255, 255, 255, 0.3);
+        box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
       }
     </style>
   </head>
   <body>
-    <div id="info">Loading satellite data...</div>
-    <!-- Load Three.js -->
+    <div id="header">
+      <h1>Stellar Dashboard</h1>
+      <button
+        onclick="document.getElementById('sidebar').classList.toggle('collapsed')"
+      >
+        ☰
+      </button>
+    </div>
+    <div id="sidebar">
+      <h2>Satellites</h2>
+      <div id="satellite-list"></div>
+    </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
-    <!-- Load OrbitControls -->
     <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/controls/OrbitControls.js"></script>
-    <!-- Load app.js -->
-    <script src="app.js"></script>
+    <!-- Toastify JS -->
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <!-- Tippy.js (include Popper.js dulu) -->
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
+    <script src="scene.js"></script>
+    <script src="earth.js"></script>
+    <script src="satellites.js"></script>
+    <script src="ui.js"></script>
+    <script src="main.js"></script>
   </body>
 </html>
