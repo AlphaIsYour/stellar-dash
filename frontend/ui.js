@@ -1,9 +1,9 @@
 function showToast(title, content) {
   Toastify({
     text: `${title}\n${content}`,
-    duration: 3000, // 3 detik
-    gravity: "top", // Muncul di atas
-    position: "right", // Pojok kanan
+    duration: 3000,
+    gravity: "top",
+    position: "right",
     style: {
       background: "linear-gradient(to right, #ff3333, #cc0000)",
       borderRadius: "5px",
@@ -26,10 +26,10 @@ function addSatelliteToUI(sat, satelliteObj) {
       satelliteObj.position.z + 10
     );
     controls.target.copy(satelliteObj.position);
+    map.setView([sat.latitude, sat.longitude], 5); // Zoom ke satelit
   };
   satelliteListDiv.appendChild(item);
 
-  // Tambah tooltip pake Tippy.js
   tippy(item, {
     content: `Lat: ${sat.latitude}, Lon: ${sat.longitude}`,
     placement: "right",
@@ -38,19 +38,18 @@ function addSatelliteToUI(sat, satelliteObj) {
   });
 }
 
-// Custom theme buat Tippy.js
 const style = document.createElement("style");
 style.innerHTML = `
-    .tippy-box[data-theme~='space'] {
-      background: rgba(0, 0, 50, 0.9);
-      color: #fff;
-      border: 1px solid #ff3333;
-      box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
-    }
-    .tippy-box[data-theme~='space'] .tippy-arrow {
-      color: #ff3333;
-    }
-  `;
+  .tippy-box[data-theme~='space'] {
+    background: rgba(0, 0, 50, 0.9);
+    color: #fff;
+    border: 1px solid #ff3333;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+  }
+  .tippy-box[data-theme~='space'] .tippy-arrow {
+    color: #ff3333;
+  }
+`;
 document.head.appendChild(style);
 
 const raycaster = new THREE.Raycaster();
@@ -58,7 +57,7 @@ const mouse = new THREE.Vector2();
 
 function onMouseClick(event) {
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  mouse.y = -((event.clientY / window.innerHeight) * 0.7) * 2 + 1; // Adjust buat 70vh
 
   raycaster.setFromCamera(mouse, camera);
 
@@ -73,7 +72,17 @@ function onMouseClick(event) {
       intersects[0].object.position.z + 10
     );
     controls.target.copy(intersects[0].object.position);
+    map.setView([sat.latitude, sat.longitude], 5); // Zoom ke satelit
   }
 }
 
 window.addEventListener("click", onMouseClick);
+
+function toggleTheme() {
+  const body = document.body;
+  const themeToggle = document.getElementById("theme-toggle");
+  body.classList.toggle("light-theme");
+  themeToggle.innerText = body.classList.contains("light-theme")
+    ? "Dark"
+    : "Light";
+}
