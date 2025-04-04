@@ -11,183 +11,66 @@
       rel="stylesheet"
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     />
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-      body {
-        margin: 0;
-        background: linear-gradient(180deg, #0a0a23, #1a1a3d);
-        font-family: Arial, sans-serif;
-        overflow: hidden;
-        transition: background 0.5s;
+      [data-theme="space"] .tippy-box {
+        @apply bg-gray-900/90 text-white border border-red-500 shadow-lg shadow-red-500/50;
       }
-      body.light-theme {
-        background: linear-gradient(180deg, #e0e7ff, #a3bffa);
-      }
-      canvas {
-        display: block;
-        height: 100vh; /* Full height lagi */
-      }
-      #header {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        background: rgba(0, 0, 50, 0.9);
-        color: #fff;
-        padding: 10px 20px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        transition: background 0.5s;
-      }
-      body.light-theme #header {
-        background: rgba(255, 255, 255, 0.9);
-        color: #1a1a3d;
-      }
-      #header h1 {
-        margin: 0;
-        font-size: 24px;
-      }
-      #theme-toggle {
-        background: #ff3333;
-        border: none;
-        padding: 5px 15px;
-        color: #fff;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background 0.2s;
-      }
-      body.light-theme #theme-toggle {
-        background: #1a1a3d;
-      }
-      #theme-toggle:hover {
-        background: #cc0000;
-      }
-      body.light-theme #theme-toggle:hover {
-        background: #0a0a23;
-      }
-      #sidebar {
-        position: absolute;
-        top: 60px;
-        left: 0;
-        width: 250px;
-        height: calc(100% - 60px);
-        background: rgba(0, 0, 50, 0.8);
-        color: #fff;
-        padding: 20px;
-        box-sizing: border-box;
-        transition: width 0.3s, background 0.5s;
-      }
-      body.light-theme #sidebar {
-        background: rgba(255, 255, 255, 0.8);
-        color: #1a1a3d;
-      }
-      #sidebar.collapsed {
-        width: 60px;
-      }
-      #sidebar h2 {
-        margin: 0 0 20px;
-        font-size: 20px;
-      }
-      .satellite-item {
-        padding: 10px;
-        margin: 5px 0;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 5px;
-        cursor: pointer;
-        transition: all 0.2s;
-      }
-      body.light-theme .satellite-item {
-        background: rgba(0, 0, 50, 0.1);
-      }
-      .satellite-item:hover {
-        background: rgba(255, 255, 255, 0.3);
-        box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
-      }
-      body.light-theme .satellite-item:hover {
-        background: rgba(0, 0, 50, 0.3);
-        box-shadow: 0 0 10px rgba(0, 0, 255, 0.5);
-      }
-      #stats {
-        position: absolute;
-        bottom: 220px; /* Atur atas peta */
-        right: 20px;
-        width: 200px;
-        background: rgba(0, 0, 50, 0.8);
-        color: #fff;
-        padding: 15px;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
-        transition: background 0.5s;
-      }
-      body.light-theme #stats {
-        background: rgba(255, 255, 255, 0.8);
-        color: #1a1a3d;
-      }
-      #stats h3 {
-        margin: 0 0 10px;
-        font-size: 18px;
-      }
-      #stats p {
-        margin: 5px 0;
-        font-size: 14px;
-      }
-      #map-container {
-        position: absolute;
-        bottom: 20px;
-        right: 20px;
-        width: 300px;
-        height: 180px;
-        background: rgba(0, 0, 50, 0.8);
-        border-radius: 10px;
-        box-shadow: 0 0 15px rgba(255, 0, 0, 0.7);
-        transition: background 0.5s;
-        z-index: 10;
-      }
-      body.light-theme #map-container {
-        background: rgba(255, 255, 255, 0.8);
-      }
-      #map {
-        width: 100%;
-        height: 100%;
-        border-radius: 10px;
-      }
-      #map-resizer {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 15px;
-        height: 15px;
-        background: #ff3333;
-        cursor: nwse-resize;
-        border-radius: 0 0 0 10px;
+      [data-theme="space"] .tippy-arrow {
+        @apply text-red-500;
       }
     </style>
   </head>
-  <body>
-    <div id="header">
-      <h1>Stellar Dashboard</h1>
-      <div>
-        <button
-          onclick="document.getElementById('sidebar').classList.toggle('collapsed')"
-        >
+  <body
+    class="bg-gradient-to-b from-gray-900 to-indigo-900 transition-colors duration-500"
+    id="body"
+  >
+    <header
+      class="fixed top-0 left-0 w-full bg-gray-900/90 text-white p-4 flex justify-between items-center z-50"
+      id="header"
+    >
+      <h1 class="text-2xl font-bold">Stellar Dashboard</h1>
+      <div class="space-x-2">
+        <button id="sidebar-toggle" class="p-2 hover:bg-gray-700 rounded">
           ☰
         </button>
-        <button id="theme-toggle" onclick="toggleTheme()">Light</button>
+        <button
+          id="theme-toggle"
+          class="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded transition-colors"
+        >
+          Light
+        </button>
       </div>
-    </div>
-    <div id="sidebar">
-      <h2>Satellites</h2>
+    </header>
+
+    <div
+      id="sidebar"
+      class="fixed top-16 left-0 w-64 h-[calc(100%-4rem)] bg-gray-900/80 text-white p-5 transition-transform duration-300 overflow-y-auto mt-2"
+    >
+      <h2 class="text-xl font-semibold mb-5">Satellites</h2>
       <div id="satellite-list"></div>
     </div>
-    <div id="stats">
-      <h3>Stats</h3>
+
+    <div
+      id="stats"
+      class="fixed bottom-56 right-5 w-52 bg-gray-900/80 text-white p-4 rounded-lg shadow-lg shadow-red-500/50"
+    >
+      <h3 class="text-lg font-semibold mb-2">Stats</h3>
       <p>Total Satellites: <span id="total-satellites">0</span></p>
       <p>Avg Altitude: <span id="avg-altitude">0</span> km</p>
     </div>
-    <div id="map-container">
-      <div id="map"></div>
-      <div id="map-resizer"></div>
+
+    <div
+      id="map-container"
+      class="fixed bottom-5 right-5 w-80 h-48 bg-gray-900/80 rounded-lg shadow-lg shadow-red-500/50"
+    >
+      <div id="map" class="w-full h-full rounded-lg"></div>
+      <div
+        id="map-resizer"
+        class="absolute bottom-0 left-0 w-4 h-4 bg-red-500 cursor-nwse-resize rounded-bl-lg"
+      ></div>
     </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>

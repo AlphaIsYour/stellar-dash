@@ -62,20 +62,16 @@ async function fetchSatellites() {
       scene.add(satellite);
       satellitesList.push(satellite);
 
-      // Efek glow satelit
-      const sprite = new THREE.Sprite(
-        new THREE.SpriteMaterial({
-          map: new THREE.TextureLoader().load(
-            "https://threejs.org/examples/textures/sprites/glow.png"
-          ),
-          color: 0xff0000,
-          transparent: true,
-          blending: THREE.AdditiveBlending,
-          opacity: 0.5,
-        })
-      );
-      sprite.scale.set(1, 1, 1);
-      satellite.add(sprite);
+      const glowGeometry = new THREE.CircleGeometry(0.5, 32);
+      const glowMaterial = new THREE.MeshBasicMaterial({
+        color: 0xff0000,
+        transparent: true,
+        opacity: 0.5,
+        blending: THREE.AdditiveBlending,
+        side: THREE.DoubleSide,
+      });
+      const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+      satellite.add(glow);
 
       const curve = new THREE.EllipseCurve(
         0,
@@ -98,14 +94,13 @@ async function fetchSatellites() {
       orbit.rotation.x = Math.PI / 2;
       scene.add(orbit);
 
-      // Efek glow orbit
       const orbitGlowMaterial = new THREE.LineBasicMaterial({
         color: 0xff3333,
         transparent: true,
         opacity: 0.3,
       });
       const orbitGlow = new THREE.Line(orbitGeometry, orbitGlowMaterial);
-      orbitGlow.scale.set(1.02, 1.02, 1.02); // Sedikit lebih besar
+      orbitGlow.scale.set(1.02, 1.02, 1.02);
       orbitGlow.rotation.x = Math.PI / 2;
       scene.add(orbitGlow);
 
@@ -131,11 +126,12 @@ function animateSatellites() {
     data.angle += 0.01;
     const phi = ((90 - data.latitude) * Math.PI) / 180;
     const theta = data.angle;
+    const radius = data.radius; // Ambil dari userData
 
     satellite.position.set(
-      data.radius * Math.sin(phi) * Math.cos(theta),
-      data.radius * Math.cos(phi),
-      data.radius * Math.sin(phi) * Math.sin(theta)
+      radius * Math.sin(phi) * Math.cos(theta),
+      radius * Math.cos(phi),
+      radius * Math.sin(phi) * Math.sin(theta)
     );
   });
 }
@@ -170,4 +166,4 @@ function animateNumber(elementId, target) {
 
 initMap();
 fetchSatellites();
-setInterval(fetchSatellites, 10500);
+setInterval(fetchSatellites, 10457);
