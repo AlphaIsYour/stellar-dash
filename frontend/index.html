@@ -12,12 +12,20 @@
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     />
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="icon" href="data:," />
     <style>
       [data-theme="space"] .tippy-box {
         @apply bg-gray-900/90 text-white border border-red-500 shadow-lg shadow-red-500/50;
       }
       [data-theme="space"] .tippy-arrow {
         @apply text-red-500;
+      }
+      .planet-option:hover {
+        @apply bg-blue-600;
+      }
+      .planet-selected {
+        @apply bg-gray-500;
       }
     </style>
   </head>
@@ -34,30 +42,83 @@
         <button id="sidebar-toggle" class="p-2 hover:bg-gray-700 rounded">
           ☰
         </button>
-        <button
-          id="theme-toggle"
-          class="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded transition-colors"
+        <select
+          id="theme-picker"
+          class="bg-red-500 hover:bg-red-600 text-white p-2 rounded transition-colors"
         >
-          Light
-        </button>
+          <option value="dark">Dark (Default)</option>
+          <option value="space-blue">Space Blue</option>
+          <option value="nebula-purple">Nebula Purple</option>
+          <option value="solar-orange">Solar Orange</option>
+        </select>
+        <div class="relative inline-block">
+          <button
+            id="planet-dropdown-toggle"
+            class="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded"
+          >
+            Pilih Planet
+          </button>
+          <div
+            id="planet-dropdown"
+            class="hidden absolute bg-gray-800 rounded mt-1 p-2 z-50"
+          >
+            <div data-planet="mars" class="planet-option p-1 cursor-pointer">
+              Mars
+            </div>
+            <div data-planet="venus" class="planet-option p-1 cursor-pointer">
+              Venus
+            </div>
+            <div data-planet="mercury" class="planet-option p-1 cursor-pointer">
+              Mercury
+            </div>
+            <div data-planet="jupiter" class="planet-option p-1 cursor-pointer">
+              Jupiter
+            </div>
+          </div>
+        </div>
       </div>
     </header>
 
     <div
       id="sidebar"
-      class="fixed top-16 left-0 w-64 h-[calc(100%-4rem)] bg-gray-900/80 text-white p-5 transition-transform duration-300 overflow-y-auto mt-2"
+      class="fixed top-16 left-0 w-64 h-[calc(100%-4rem)] bg-gray-900/80 text-white p-5 transition-transform duration-300 overflow-y-auto"
     >
-      <h2 class="text-xl font-semibold mb-5">Satellites</h2>
+      <h2 class="text-xl font-semibold mb-2">Satellites</h2>
+      <input
+        id="search-bar"
+        type="text"
+        placeholder="Search satellites..."
+        class="w-full p-2 mb-2 bg-gray-800 text-white border border-gray-700 rounded focus:outline-none focus:ring-2 focus:ring-red-500"
+      />
+      <select
+        id="altitude-filter"
+        class="w-full p-2 mb-2 bg-gray-800 text-white border border-gray-700 rounded focus:outline-none focus:ring-2 focus:ring-red-500"
+      >
+        <option value="all">All Altitudes</option>
+        <option value="low">Below 500 km</option>
+        <option value="mid">500 - 1000 km</option>
+        <option value="high">Above 1000 km</option>
+      </select>
+      <button
+        id="export-data"
+        class="w-full p-2 mb-4 bg-red-500 hover:bg-red-600 text-white rounded transition-colors"
+      >
+        Export Data
+      </button>
       <div id="satellite-list"></div>
     </div>
 
     <div
       id="stats"
-      class="fixed bottom-56 right-5 w-52 bg-gray-900/80 text-white p-4 rounded-lg shadow-lg shadow-red-500/50"
+      class="fixed bottom-56 right-5 w-64 bg-gray-900/80 text-white p-4 rounded-lg shadow-lg shadow-red-500/50"
     >
       <h3 class="text-lg font-semibold mb-2">Stats</h3>
       <p>Total Satellites: <span id="total-satellites">0</span></p>
+      <p>Active Satellites: <span id="active-satellites">0</span></p>
       <p>Avg Altitude: <span id="avg-altitude">0</span> km</p>
+      <p>Min Altitude: <span id="min-altitude">0</span> km</p>
+      <p>Max Altitude: <span id="max-altitude">0</span> km</p>
+      <canvas id="altitude-chart" class="mt-4" height="100"></canvas>
     </div>
 
     <div
@@ -71,6 +132,20 @@
       ></div>
     </div>
 
+    <div
+      id="satellite-popup"
+      class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-900/90 text-white p-6 rounded-lg shadow-lg shadow-red-500/50 z-50 max-w-sm w-full"
+    >
+      <h3 id="popup-title" class="text-xl font-bold mb-4"></h3>
+      <p id="popup-info" class="mb-4"></p>
+      <button
+        id="popup-close"
+        class="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded transition-colors"
+      >
+        Close
+      </button>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
@@ -78,7 +153,10 @@
     <script src="https://unpkg.com/tippy.js@6"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="scene.js"></script>
-    <script src="earth.js"></script>
+    <script src="venus.js"></script>
+    <script src="mercury.js"></script>
+    <script src="mars.js"></script>
+    <script src="jupiter.js"></script>
     <script src="satellites.js"></script>
     <script src="ui.js"></script>
     <script src="main.js"></script>

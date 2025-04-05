@@ -1,6 +1,14 @@
 function animate() {
   requestAnimationFrame(animate);
-  earth.rotation.y += 0.01;
+  earth.rotation.y += 0.001;
+  mars.rotation.y += 0.001;
+  venus.rotation.y += 0.001;
+  mercury.rotation.y += 0.001;
+  jupiter.rotation.y += 0.001;
+  if (planets.has("mars")) animateMars();
+  if (planets.has("venus")) animateVenus();
+  if (planets.has("mercury")) animateMercury();
+  if (planets.has("jupiter")) animateJupiter();
   animateSatellites();
   controls.update();
   renderer.render(scene, camera);

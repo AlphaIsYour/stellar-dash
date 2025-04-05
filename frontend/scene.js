@@ -5,57 +5,94 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   1000
 );
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.05;
-controls.screenSpacePanning = false;
-controls.minDistance = 10;
-controls.maxDistance = 50;
 
-const light = new THREE.PointLight(0xffffff, 1, 100);
-light.position.set(10, 10, 10);
-scene.add(light);
-const ambientLight = new THREE.AmbientLight(0x404040);
+const ambientLight = new THREE.AmbientLight(0x404040, 2);
 scene.add(ambientLight);
+const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+directionalLight.position.set(5, 5, 5);
+scene.add(directionalLight);
 
-// Tambah bintang
-function addStars() {
-  const starGeometry = new THREE.BufferGeometry();
-  const starCount = 1000;
-  const positions = new Float32Array(starCount * 3);
+// TextureLoader global
+const textureLoader = new THREE.TextureLoader();
 
-  for (let i = 0; i < starCount * 3; i += 3) {
-    positions[i] = (Math.random() - 0.5) * 2000; // x
-    positions[i + 1] = (Math.random() - 0.5) * 2000; // y
-    positions[i + 2] = (Math.random() - 0.5) * 2000; // z
+// Bumi langsung di scene.js
+const earthGeometry = new THREE.SphereGeometry(5, 32, 32);
+const earthTexture = textureLoader.load(
+  "earth.jpg",
+  () => console.log("Tekstur Bumi loaded"),
+  undefined,
+  (error) => console.error("Gagal load tekstur Bumi:", error)
+);
+const earthMaterial = new THREE.MeshPhongMaterial({ map: earthTexture });
+const earth = new THREE.Mesh(earthGeometry, earthMaterial);
+scene.add(earth);
+
+const planets = new Map();
+
+// Tambah planet ke scene
+function addPlanet(planetName) {
+  if (planets.has(planetName)) return;
+
+  switch (planetName) {
+    case "mars":
+      addMarsToScene(scene);
+      planets.set(planetName, mars);
+      break;
+    case "venus":
+      addVenusToScene(scene);
+      planets.set(planetName, venus);
+      break;
+    case "mercury":
+      addMercuryToScene(scene);
+      planets.set(planetName, mercury);
+      break;
+    case "jupiter":
+      addJupiterToScene(scene);
+      planets.set(planetName, jupiter);
+      break;
   }
-
-  starGeometry.setAttribute(
-    "position",
-    new THREE.BufferAttribute(positions, 3)
-  );
-  const starMaterial = new THREE.PointsMaterial({
-    color: 0xffffff,
-    size: 2,
-    sizeAttenuation: true,
-    transparent: true,
-    opacity: 0.8,
-  });
-  const stars = new THREE.Points(starGeometry, starMaterial);
-  scene.add(stars);
-
-  // Animasi kedip
-  function animateStars() {
-    starMaterial.opacity = 0.8 + Math.sin(Date.now() * 0.001) * 0.2;
-    requestAnimationFrame(animateStars);
-  }
-  animateStars();
 }
 
-addStars();
+function removePlanet(planetName) {
+  const planet = planets.get(planetName);
+  if (planet) {
+    scene.remove(planet);
+    planets.delete(planetName);
+  }
+}
 
-camera.position.z = 15;
+// Dropdown logic
+const planetToggle = document.getElementById("planet-dropdown-toggle");
+const planetDropdown = document.getElementById("planet-dropdown");
+planetToggle.addEventListener("click", () => {
+  planetDropdown.classList.toggle("hidden");
+});
+
+document.querySelectorAll(".planet-option").forEach((option) => {
+  option.addEventListener("click", () => {
+    const planetName = option.dataset.planet;
+    if (!planets.has(planetName)) {
+      addPlanet(planetName);
+      option.classList.add("planet-selected");
+      const removeBtn = document.createElement("span");
+      removeBtn.innerText = " ×";
+      removeBtn.classList.add("text-red-500", "cursor-pointer", "ml-1");
+      removeBtn.onclick = (e) => {
+        e.stopPropagation();
+        removePlanet(planetName);
+        option.classList.remove("planet-selected");
+        removeBtn.remove();
+      };
+      option.appendChild(removeBtn);
+    }
+  });
+});
+
+camera.position.z = 20;

@@ -1,6 +1,7 @@
 const satellitesList = [];
 let map,
   markers = [];
+let altitudeChart;
 
 function initMap() {
   const mapContainer = document.getElementById("map-container");
@@ -38,11 +39,18 @@ async function fetchSatellites() {
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     const satellites = await response.json();
 
+    // Kosongin semua dulu
     satellitesList.forEach((sat) => scene.remove(sat));
     satellitesList.length = 0;
     document.getElementById("satellite-list").innerHTML = "";
     markers.forEach((marker) => map.removeLayer(marker));
     markers = [];
+    allSatellites = [];
+
+    // Cek kalo satellites ada dan array
+    if (!satellites || !Array.isArray(satellites)) {
+      throw new Error("Data satelit tidak valid atau kosong");
+    }
 
     satellites.forEach((sat) => {
       const satGeometry = new THREE.SphereGeometry(0.2, 16, 16);
@@ -94,16 +102,6 @@ async function fetchSatellites() {
       orbit.rotation.x = Math.PI / 2;
       scene.add(orbit);
 
-      const orbitGlowMaterial = new THREE.LineBasicMaterial({
-        color: 0xff3333,
-        transparent: true,
-        opacity: 0.3,
-      });
-      const orbitGlow = new THREE.Line(orbitGeometry, orbitGlowMaterial);
-      orbitGlow.scale.set(1.02, 1.02, 1.02);
-      orbitGlow.rotation.x = Math.PI / 2;
-      scene.add(orbitGlow);
-
       addSatelliteToUI(sat, satellite);
 
       const marker = L.marker([sat.latitude, sat.longitude])
@@ -113,10 +111,11 @@ async function fetchSatellites() {
     });
 
     updateStats(satellites);
+    filterSatellites();
   } catch (error) {
     console.error("Gagal fetch data:", error);
     document.getElementById("satellite-list").innerText =
-      "Error loading satellite data";
+      "Error loading satellite data: " + error.message;
   }
 }
 
@@ -126,7 +125,7 @@ function animateSatellites() {
     data.angle += 0.01;
     const phi = ((90 - data.latitude) * Math.PI) / 180;
     const theta = data.angle;
-    const radius = data.radius; // Ambil dari userData
+    const radius = data.radius;
 
     satellite.position.set(
       radius * Math.sin(phi) * Math.cos(theta),
@@ -138,11 +137,63 @@ function animateSatellites() {
 
 function updateStats(satellites) {
   const total = satellites.length;
+  const active = satellites.length; // Asumsi semua aktif, kalo ada data status, bisa diubah
   const avgAltitude =
     satellites.reduce((sum, sat) => sum + sat.altitude, 0) / total || 0;
+  const minAltitude = Math.min(...satellites.map((sat) => sat.altitude)) || 0;
+  const maxAltitude = Math.max(...satellites.map((sat) => sat.altitude)) || 0;
 
   animateNumber("total-satellites", total);
+  animateNumber("active-satellites", active);
   animateNumber("avg-altitude", avgAltitude.toFixed(2));
+  animateNumber("min-altitude", minAltitude);
+  animateNumber("max-altitude", maxAltitude);
+
+  // Update chart
+  const altitudeRanges = {
+    "<500": 0,
+    "500-1000": 0,
+    ">1000": 0,
+  };
+  satellites.forEach((sat) => {
+    if (sat.altitude < 500) altitudeRanges["<500"]++;
+    else if (sat.altitude <= 1000) altitudeRanges["500-1000"]++;
+    else altitudeRanges[">1000"]++;
+  });
+
+  if (!altitudeChart) {
+    const ctx = document.getElementById("altitude-chart").getContext("2d");
+    altitudeChart = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: ["<500 km", "500-1000 km", ">1000 km"],
+        datasets: [
+          {
+            label: "Satellites",
+            data: [
+              altitudeRanges["<500"],
+              altitudeRanges["500-1000"],
+              altitudeRanges[">1000"],
+            ],
+            backgroundColor: "rgba(255, 51, 51, 0.7)",
+            borderColor: "rgba(255, 51, 51, 1)",
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        scales: { y: { beginAtZero: true } },
+        plugins: { legend: { display: false } },
+      },
+    });
+  } else {
+    altitudeChart.data.datasets[0].data = [
+      altitudeRanges["<500"],
+      altitudeRanges["500-1000"],
+      altitudeRanges[">1000"],
+    ];
+    altitudeChart.update();
+  }
 }
 
 function animateNumber(elementId, target) {
