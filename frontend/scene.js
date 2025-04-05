@@ -57,6 +57,10 @@ function addPlanet(planetName) {
       addJupiterToScene(scene);
       planets.set(planetName, jupiter);
       break;
+    case "sun":
+      addSunToScene(scene);
+      planets.set(planetName, sun);
+      break;
   }
 }
 
