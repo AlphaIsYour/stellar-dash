@@ -54,28 +54,46 @@
         <div class="relative inline-block">
           <button
             id="planet-dropdown-toggle"
-            class="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded"
+            class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-5 rounded"
           >
             Pilih Planet
           </button>
           <div
             id="planet-dropdown"
-            class="hidden absolute bg-gray-800 rounded mt-1 p-2 z-50"
+            class="hidden absolute bg-gray-800 rounded mt-1 py-2 px-5 z-50"
           >
-            <div data-planet="mars" class="planet-option p-1 cursor-pointer">
-              Mars
+            <div data-planet="sun" class="planet-option px-1 cursor-pointer">
+              Sun
             </div>
-            <div data-planet="venus" class="planet-option p-1 cursor-pointer">
-              Venus
-            </div>
-            <div data-planet="mercury" class="planet-option p-1 cursor-pointer">
+            <div
+              data-planet="mercury"
+              class="planet-option px-1 cursor-pointer"
+            >
               Mercury
             </div>
-            <div data-planet="jupiter" class="planet-option p-1 cursor-pointer">
+            <div data-planet="venus" class="planet-option px-1 cursor-pointer">
+              Venus
+            </div>
+            <div data-planet="mars" class="planet-option px-1 cursor-pointer">
+              Mars
+            </div>
+            <div
+              data-planet="jupiter"
+              class="planet-option px-1 cursor-pointer"
+            >
               Jupiter
             </div>
-            <div data-planet="sun" class="planet-option p-1 cursor-pointer">
-              Sun
+            <div data-planet="saturn" class="planet-option px-1 cursor-pointer">
+              Saturn
+            </div>
+            <div data-planet="uranus" class="planet-option px-1 cursor-pointer">
+              Uranus
+            </div>
+            <div
+              data-planet="neptune"
+              class="planet-option px-1 cursor-pointer"
+            >
+              Neptune
             </div>
           </div>
         </div>
@@ -84,7 +102,7 @@
 
     <div
       id="sidebar"
-      class="fixed top-16 left-0 w-64 h-[calc(100%-4rem)] bg-gray-900/80 text-white p-5 transition-transform duration-300 overflow-y-auto"
+      class="fixed top-16 left-0 w-64 h-[calc(100%-4rem)] bg-gray-900/80 text-white p-5 transition-transform duration-300 overflow-y-auto mt-2"
     >
       <h2 class="text-xl font-semibold mb-2">Satellites</h2>
       <input
@@ -160,6 +178,9 @@
     <script src="mercury.js"></script>
     <script src="mars.js"></script>
     <script src="jupiter.js"></script>
+    <script src="saturn.js"></script>
+    <script src="uranus.js"></script>
+    <script src="neptune.js"></script>
     <script src="sun.js"></script>
     <script src="satellites.js"></script>
     <script src="ui.js"></script>

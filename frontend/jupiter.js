@@ -7,7 +7,7 @@ const jupiterTexture = textureLoader.load(
 );
 const jupiterMaterial = new THREE.MeshPhongMaterial({ map: jupiterTexture });
 const jupiter = new THREE.Mesh(jupiterGeometry, jupiterMaterial);
-jupiter.position.set(-35, 0, 0);
+jupiter.position.set(35, 0, 0);
 
 function addJupiterToScene(scene) {
   scene.add(jupiter);

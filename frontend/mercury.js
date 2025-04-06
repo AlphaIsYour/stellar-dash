@@ -7,7 +7,7 @@ const mercuryTexture = textureLoader.load(
 );
 const mercuryMaterial = new THREE.MeshPhongMaterial({ map: mercuryTexture });
 const mercury = new THREE.Mesh(mercuryGeometry, mercuryMaterial);
-mercury.position.set(30, 0, 0);
+mercury.position.set(-28, 0, 0);
 
 function addMercuryToScene(scene) {
   scene.add(mercury);

@@ -19,10 +19,17 @@ const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
 directionalLight.position.set(5, 5, 5);
 scene.add(directionalLight);
 
-// TextureLoader global
 const textureLoader = new THREE.TextureLoader();
 
-// Bumi langsung di scene.js
+// Tambah background Milky Way
+const backgroundTexture = textureLoader.load(
+  "milky-way.jpg",
+  () => console.log("Tekstur Milky Way loaded"),
+  undefined,
+  (error) => console.error("Gagal load tekstur Milky Way:", error)
+);
+scene.background = backgroundTexture;
+
 const earthGeometry = new THREE.SphereGeometry(5, 32, 32);
 const earthTexture = textureLoader.load(
   "earth.jpg",
@@ -36,7 +43,6 @@ scene.add(earth);
 
 const planets = new Map();
 
-// Tambah planet ke scene
 function addPlanet(planetName) {
   if (planets.has(planetName)) return;
 
@@ -61,6 +67,18 @@ function addPlanet(planetName) {
       addSunToScene(scene);
       planets.set(planetName, sun);
       break;
+    case "saturn":
+      addSaturnToScene(scene);
+      planets.set(planetName, saturn);
+      break;
+    case "uranus":
+      addUranusToScene(scene);
+      planets.set(planetName, uranus);
+      break;
+    case "neptune":
+      addNeptuneToScene(scene);
+      planets.set(planetName, neptune);
+      break;
   }
 }
 
@@ -72,7 +90,6 @@ function removePlanet(planetName) {
   }
 }
 
-// Dropdown logic
 const planetToggle = document.getElementById("planet-dropdown-toggle");
 const planetDropdown = document.getElementById("planet-dropdown");
 planetToggle.addEventListener("click", () => {

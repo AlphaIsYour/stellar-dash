@@ -7,7 +7,7 @@ const sunTexture = textureLoader.load(
 );
 const sunMaterial = new THREE.MeshPhongMaterial({ map: sunTexture });
 const sun = new THREE.Mesh(sunGeometry, sunMaterial);
-sun.position.set(-67, 0, 0);
+sun.position.set(-48, 0, 0);
 
 function addSunToScene(scene) {
   scene.add(sun);
