@@ -21,7 +21,6 @@ scene.add(directionalLight);
 
 const textureLoader = new THREE.TextureLoader();
 
-// Tambah background Milky Way
 const backgroundTexture = textureLoader.load(
   "milky-way.jpg",
   () => console.log("Tekstur Milky Way loaded"),

@@ -225,5 +225,4 @@ document.getElementById("popup-close").addEventListener("click", () => {
 });
 document.getElementById("export-data").addEventListener("click", exportData);
 
-// Set tema default
 applyTheme("dark");
