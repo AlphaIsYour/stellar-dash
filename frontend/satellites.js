@@ -39,7 +39,6 @@ async function fetchSatellites() {
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     const satellites = await response.json();
 
-    // Kosongin semua dulu
     satellitesList.forEach((sat) => scene.remove(sat));
     satellitesList.length = 0;
     document.getElementById("satellite-list").innerHTML = "";
@@ -47,7 +46,6 @@ async function fetchSatellites() {
     markers = [];
     allSatellites = [];
 
-    // Cek kalo satellites ada dan array
     if (!satellites || !Array.isArray(satellites)) {
       throw new Error("Data satelit tidak valid atau kosong");
     }
@@ -137,7 +135,7 @@ function animateSatellites() {
 
 function updateStats(satellites) {
   const total = satellites.length;
-  const active = satellites.length; // Asumsi semua aktif, kalo ada data status, bisa diubah
+  const active = satellites.length;
   const avgAltitude =
     satellites.reduce((sum, sat) => sum + sat.altitude, 0) / total || 0;
   const minAltitude = Math.min(...satellites.map((sat) => sat.altitude)) || 0;
@@ -149,7 +147,6 @@ function updateStats(satellites) {
   animateNumber("min-altitude", minAltitude);
   animateNumber("max-altitude", maxAltitude);
 
-  // Update chart
   const altitudeRanges = {
     "<500": 0,
     "500-1000": 0,
